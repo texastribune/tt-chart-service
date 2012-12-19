@@ -19,6 +19,11 @@ class TestApp(unittest.TestCase):
         response = self.app.post('/render/?token=%s' % TOKEN)
         self.assertEquals(response.status_code, 400)
 
+    def test_error_during_render_returns_500_error(self):
+        response = self.app.post('/render/?token=%s' % TOKEN,
+                                 data={'svg': "<svg><circle /></svg>"})
+        self.assertEquals(response.status_code, 500)
+
     def test_post_with_svg_returns_png(self):
         response = self.app.post('/render/?token=%s' % TOKEN, data={
             'svg': """

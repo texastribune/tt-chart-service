@@ -24,8 +24,11 @@ def render():
     # Render PNG to response
     command = ['convert', 'svg:-', 'png:-']
     process = Popen(command, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-    png_bin = process.communicate(input=svg)[0]
-    return Response(png_bin, mimetype='image/png')
+    result = process.communicate(input=svg)
+    if process.returncode != 0:
+        abort(500)
+
+    return Response(result[0], mimetype='image/png')
 
 
 if __name__ == '__main__':
