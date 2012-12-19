@@ -1,6 +1,6 @@
 import unittest
 
-from app import app
+from app import app, TOKEN
 
 
 class TestApp(unittest.TestCase):
@@ -11,12 +11,16 @@ class TestApp(unittest.TestCase):
         response = self.app.get('/render/')
         self.assertEquals(response.status_code, 405)
 
-    def test_post_without_svg_returns_400_bad_request(self):
+    def test_post_without_token_returns_401_access_denied(self):
         response = self.app.post('/render/')
+        self.assertEquals(response.status_code, 401)
+
+    def test_post_without_svg_returns_400_bad_request(self):
+        response = self.app.post('/render/?token=%s' % TOKEN)
         self.assertEquals(response.status_code, 400)
 
     def test_post_with_svg_returns_png(self):
-        response = self.app.post('/render/', data={
+        response = self.app.post('/render/?token=%s' % TOKEN, data={
             'svg': """
             <svg width="100px" height="300px">
                  <circle cx="50" cy="50" r="50" fill="red" />
