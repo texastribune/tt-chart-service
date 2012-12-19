@@ -1,4 +1,6 @@
 from subprocess import Popen, PIPE, STDOUT
+import json
+import logging
 import os
 
 from flask import Flask, Response, request, abort
@@ -6,6 +8,9 @@ from flask_heroku import Heroku
 
 app = Flask(__name__)
 heroku = Heroku(app)
+
+logging.basicConfig()
+logger = logging.getLogger(__name__)
 
 TOKEN = os.environ['TT_CHART_SERVICE_TOKEN']
 
@@ -24,11 +29,12 @@ def render():
     # Render PNG to response
     command = ['convert', 'svg:-', 'png:-']
     process = Popen(command, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-    result = process.communicate(input=svg)
+    output = process.communicate(input=svg)[0]
     if process.returncode != 0:
+        logger.error(json.dumps({'svg': svg, 'output': output}))
         abort(500)
 
-    return Response(result[0], mimetype='image/png')
+    return Response(output, mimetype='image/png')
 
 
 if __name__ == '__main__':
