@@ -1,9 +1,10 @@
 from subprocess import Popen, PIPE, STDOUT
 
 from flask import Flask, Response
-
+from flask_heroku import Heroku
 
 app = Flask(__name__)
+heroku = Heroku(app)
 
 
 @app.route('/render/')
