@@ -9,7 +9,7 @@ heroku = Heroku(app)
 
 @app.route('/render/')
 def render():
-    svg_bin = """<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    svg_bin = """<svg width="200px" height="100px">
 <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red" />
 </svg>"""
     command = ['convert', 'svg:-', 'png:-']
