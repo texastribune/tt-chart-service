@@ -1,10 +1,11 @@
-from subprocess import Popen, PIPE, STDOUT
 import json
 import logging
 import os
 
 from flask import Flask, Response, request, abort
 from flask_heroku import Heroku
+from wand.image import Image
+from wand.exceptions import WandException
 
 app = Flask(__name__)
 heroku = Heroku(app)
@@ -27,14 +28,15 @@ def render():
         abort(400)
 
     # Render PNG to response
-    command = ['convert', 'svg:-', 'png:-']
-    process = Popen(command, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-    output = process.communicate(input=svg)[0]
-    if process.returncode != 0:
-        logger.error(json.dumps({'svg': svg, 'output': output}))
+    try:
+        with Image(blob=svg, format='svg') as image:
+            with image.convert('png') as converted_image:
+                png_bin = converted_image.make_blob()
+    except WandException as e:
+        logger.error(json.dumps({'svg': svg, 'exception': str(e)}))
         abort(500)
 
-    return Response(output, mimetype='image/png')
+    return Response(png_bin, mimetype='image/png')
 
 
 if __name__ == '__main__':

@@ -6,3 +6,4 @@ gevent==0.13.8
 greenlet==0.4.0
 gunicorn==0.16.1
 wsgiref==0.1.2
+git+http://github.com/dahlia/wand.git@94a1d367384f43d259882f18b5ba0ce2db1a9b51
