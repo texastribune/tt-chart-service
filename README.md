@@ -14,3 +14,8 @@ tt-chart-service
 ## Live Testing
 
     curl --data "svg=`cat test.svg`" $web_url/render/?token=$TT_CHART_SERVICE_TOKEN
+
+
+## License
+
+Apache 2.0
