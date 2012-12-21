@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from app import app
@@ -38,6 +39,28 @@ class TestApp(unittest.TestCase):
                                  data={'svg': self.good_svg})
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.mimetype, 'image/png')
+
+
+class TestEnv(unittest.TestCase):
+    def setUp(self):
+        import app as app_module
+        self.app_module = app_module
+        self.env = os.environ.copy()
+
+    def tearDown(self):
+        os.environ = self.env.copy()
+
+    def test_app_token_is_required_in_env(self):
+        del os.environ['TT_CHART_SERVICE_TOKEN']
+        self.assertRaises(KeyError, reload, self.app_module)
+
+    def test_app_token_is_set_from_env(self):
+        os.environ['TT_CHART_SERVICE_TOKEN'] = None
+        reload(self.app_module)
+        self.assertEqual(self.app_module.app.config['token'], None)
+        os.environ['TT_CHART_SERVICE_TOKEN'] = 'secret'
+        reload(self.app_module)
+        self.assertEqual(self.app_module.app.config['token'], 'secret')
 
 
 if __name__ == '__main__':
