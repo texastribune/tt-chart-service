@@ -13,13 +13,13 @@ heroku = Heroku(app)
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
-TOKEN = os.environ['TT_CHART_SERVICE_TOKEN']
+app.config['token'] = os.environ['TT_CHART_SERVICE_TOKEN']
 
 
 @app.route('/render/', methods=['POST'])
 def render():
     # Require token for authorization
-    if request.args.get('token') != TOKEN:
+    if request.args.get('token') != app.config['token']:
         abort(401)
 
     # Get svg body from POST parameter

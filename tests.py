@@ -1,11 +1,11 @@
 import unittest
 
-from app import app, TOKEN
+from app import app
 
 
 class TestApp(unittest.TestCase):
     def setUp(self):
-        self.token = TOKEN
+        self.token = app.config['token'] = 'test-token'
         self.app = app.test_client()
         self.good_svg = """
         <svg width="100px" height="300px">
