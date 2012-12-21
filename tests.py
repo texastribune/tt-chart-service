@@ -1,6 +1,8 @@
 import os
 import unittest
 
+from mock import patch
+
 from app import app
 
 
@@ -30,9 +32,15 @@ class TestApp(unittest.TestCase):
         self.assertEquals(response.status_code, 400)
 
     def test_error_during_render_returns_500_error(self):
-        response = self.app.post(self.render_url_with_token,
-                                 data={'svg': self.bad_svg})
+        with patch('logging.Logger.error') as patched_error:
+            response = self.app.post(self.render_url_with_token,
+                                     data={'svg': self.bad_svg})
+
         self.assertEquals(response.status_code, 500)
+
+        call_args, call_kwargs = patched_error.call_args
+        self.assertTrue('"svg":' in call_args[0])
+        self.assertTrue('"exception":' in call_args[0])
 
     def test_post_with_svg_returns_png(self):
         response = self.app.post(self.render_url_with_token,
